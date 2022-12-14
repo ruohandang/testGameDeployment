@@ -1,0 +1,581 @@
+@import url("https://fonts.googleapis.com/css?family=Aclonica");
+
+html {
+  height: 100%;
+}
+#root {
+  height: 100%;
+}
+div {
+  height: 100%;
+  margin:0;
+  padding:0;
+}
+/* BACKGROUND SAME ACROSS SITE */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+
+
+  font-family: "Aclonica", Garamond;
+  text-align: center;
+  /* background image sourced from https://pixabay.com/images/id-3198608/
+     * CC licence -- no attribution required */
+  background-color: #413d28;
+  background-image: url(./mushroom-gb25da9027_1920.jpg);
+  background-attachment: scroll;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+/* ============ BANNERS AND HEADERS =========== */
+
+/* banner with no background; applies to "home" pages */
+#banner {
+  padding-top: 1em;
+  padding-bottom: 0.125em;
+
+  color: #fff28e;
+  text-shadow: 4px 4px 5px #413d28;
+  letter-spacing: 2px;
+  font-size: 250%;
+}
+
+/* header with background; applies to user and game pages */
+#header {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 1.25em;
+
+  margin: 0;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+
+  color: #fff28e;
+  text-shadow: 4px 4px 5px black;
+  letter-spacing: 2px;
+  font-size: 100%;
+
+  background-color: #413d28e6;
+  border-style: solid;
+  border-color: #413d28;
+}
+
+/* username styling/placement */
+#header h1 {
+  margin-left: 1em;
+  margin-right: auto;
+}
+#header h1::after {
+  content: ""; /* TODO: replace with actual username */
+}
+/* links in header */
+#header a {
+  color: #fff28e;
+  padding-right: 1em;
+}
+/* other user actions or game info */
+#header p {
+  margin: 0;
+  margin-left: auto;
+  margin-right: 8em;
+}
+
+/* ============ CONTENT CONTAINERS =========== */
+
+/* content box with background for buttons, forms etc */
+#box {
+  width: fit-content;
+
+  height: fit-content;
+
+  margin: auto;
+  margin-top: 3em;
+  padding: 1em;
+
+  color: black;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  background-color: #fff28e82;
+
+  border-style: solid;
+  border-color: #413d28;
+  border-radius: 3px;
+}
+
+/* box header */
+#box h2 {
+  padding: 0;
+  margin: 0;
+}
+
+/* decorative image for home pages */
+#deco {
+  width: auto;
+  height: 7em;
+
+  animation-name: wiggle;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+#deco:hover {
+  animation: pause;
+}
+#message {
+  color: hotpink;
+  font-weight: bold;
+}
+/* divisions inside containers  */
+.section {
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
+  padding: 5px;
+
+  font-size: 100%;
+
+  border-color: #413d28;
+}
+.container {
+  margin:0;
+  height: "100vh";
+  overflow:hidden;
+
+  display: flex;
+  flex-direction: row;
+  padding: auto;
+  position: relative;
+}
+.contain {
+  margin:0;
+  display: flex;
+  flex-flow: row;
+  height: 100%;
+}
+
+/* small text areas */
+.subtext {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  font-size: 75%;
+}
+#sidebar {
+  height: 100%;
+  width: fit-content;
+  max-width: fit-content;
+  padding: 0.75em;
+  margin:0;
+
+
+  color: black;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  background-color: #fff28e82;
+
+  border-style: solid;
+  border-color: #413d28;
+  border-radius: 3px;
+}
+
+#game {
+  height: 100%;
+  width:100%;
+  margin: auto;
+  margin-bottom: 0;
+  padding: 0;
+  padding-bottom: 1.5em;
+  overflow:hidden;
+
+
+  color: black;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  background-color: #fff28e82;
+
+  border-style: solid;
+  border-left-width:0;
+  border-color: #413d28;
+  border-radius: 3px;
+}
+
+/* portrait/avatar for user icon  FROM JNO: NOT CURRENTLY IN USE*/
+#portrait {
+  width: fit-content;
+  height: fit-content;
+  margin-bottom: -0.5em;
+  margin-top: -0.5em;
+  margin-left: 0.5em;
+
+  padding: 0;
+
+  color: black;
+  background-color: #fff28e;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  border-style: solid;
+  border-color: black;
+  border-radius: 50%;
+}
+.avatar {
+  width: auto;
+  height: 4em;
+}
+
+/* ============ TABLE STYLING ============ */
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table {
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+table h2{margin-bottom:0em;}
+table h3{margin:0.5em;}
+td.un{text-align:left;}
+td.us{text-align:right;}
+
+
+/* ============ BUTTONS AND FORM STYLING =========== */
+
+/* button styling (for all) */
+button {
+  min-width: 8.5em;
+
+  margin: 0.125em;
+  padding: 0.25em;
+
+  font-family: "Aclonica", Garamond;
+  color: black;
+  text-shadow: 2px 2px 5px whitesmoke;
+
+  background-color: #fff28e;
+
+  border-color: #413d28;
+  border-radius: 3px;
+}
+button:hover {
+  background-color: #fbf4bb;
+}
+button:active {
+  background-color: #f9e96f;
+  box-shadow: 0 2px #666;
+  transform: translateY(2px);
+}
+button.large {
+  font-size: 250%;
+}
+
+
+/* ============ ANIMATIONS =========== */
+
+/* mushroom wiggle animation */
+@keyframes wiggle {
+  0% {
+    transform: rotate(0.5deg);
+  }
+  50% {
+    transform: rotate(-0.5deg);
+  }
+  100% {
+    transform: rotate(0.5deg);
+  }
+}
+
+/* pause animation */
+@keyframes pause {
+  100% {
+    transform: rotate(0deg);
+  }
+}@import url("https://fonts.googleapis.com/css?family=Aclonica");
+
+html {
+  height: 100%;
+}
+#root {
+  height: 100%;
+}
+div {
+  height: 100%;
+  margin:0;
+  padding:0;
+}
+/* BACKGROUND SAME ACROSS SITE */
+body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+
+  font-family: "Aclonica", Garamond;
+  text-align: center;
+  /* background image sourced from https://pixabay.com/images/id-3198608/
+     * CC licence -- no attribution required */
+  background-color: #413d28;
+  background-image: url(./mushroom-gb25da9027_1920.jpg);
+  background-attachment: scroll;
+  background-repeat: no-repeat;
+  background-position: top center;
+}
+
+/* ============ BANNERS AND HEADERS =========== */
+
+/* banner with no background; applies to "home" pages */
+#banner {
+  padding-top: 1em;
+  padding-bottom: 0.125em;
+
+  color: #fff28e;
+  text-shadow: 4px 4px 5px #413d28;
+  letter-spacing: 2px;
+  font-size: 250%;
+}
+
+/* header with background; applies to user and game pages */
+#header {
+  display: flex;
+  flex-flow: row;
+  align-items: center;
+  justify-content: flex-start;
+  height: 1.25em;
+
+  margin: 0;
+  padding-top: 0.25em;
+  padding-bottom: 0.25em;
+
+  color: #fff28e;
+  text-shadow: 4px 4px 5px black;
+  letter-spacing: 2px;
+  font-size: 100%;
+
+  background-color: #413d28e6;
+
+  border-style: solid;
+  border-color: #413d28;
+}
+
+/* username styling/placement */
+#header h1 {
+  margin-left: 1em;
+  margin-right: auto;
+}
+#header h1::after {
+  content: ""; /* TODO: replace with actual username */
+}
+/* links in header */
+#header a {
+  color: #fff28e;
+  padding-right: 1em;
+}
+/* other user actions or game info */
+#header p {
+  margin: 0;
+  margin-left: auto;
+  margin-right: 8em;
+}
+
+/* ============ CONTENT CONTAINERS =========== */
+
+/* content box with background for buttons, forms etc */
+#box {
+  width: fit-content;
+
+  height: fit-content;
+
+  margin: auto;
+  margin-top: 3em;
+  padding: 1em;
+
+  color: black;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  background-color: #fff28e82;
+
+  border-style: solid;
+  border-color: #413d28;
+  border-radius: 3px;
+}
+
+/* box header */
+#box h2 {
+  padding: 0;
+  margin: 0;
+}
+
+/* decorative image for home pages */
+#deco {
+  width: auto;
+  height: 7em;
+
+  animation-name: wiggle;
+  animation-duration: 0.5s;
+  animation-iteration-count: infinite;
+}
+#deco:hover {
+  animation: pause;
+}
+#message {
+  color: hotpink;
+  font-weight: bold;
+}
+/* divisions inside containers  */
+.section {
+  margin-bottom: 0.25em;
+  margin-top: 0.25em;
+  padding: 5px;
+
+  font-size: 100%;
+
+  border-color: #413d28;
+}
+
+#sidebar {
+  height: 100%;
+  padding: 0.75em;
+  margin:0;
+  width: fit-content;
+
+  color: black;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  background-color: #fff28e82;
+
+  border-style: solid;
+  border-color: #413d28;
+  border-radius: 3px;
+}
+.container {
+  margin:0;
+  height: "100vh";
+  display: flex;
+  flex-direction: row;
+  padding: auto;
+  position: relative;
+}
+.contain {
+  margin:0;
+  display: flex;
+  flex-flow: row;
+  height: 100%;
+}
+#game {
+  height: 100%;
+  margin: auto;
+  margin-bottom: 0;
+  padding: 0;
+  padding-bottom: 1.5em;
+
+  color: black;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  background-color: #fff28e82;
+
+  border-style: solid;
+  border-color: #413d28;
+  border-radius: 3px;
+}
+
+/* portrait/avatar for user icon  FROM JNO: NOT CURRENTLY IN USE*/
+#portrait {
+  width: fit-content;
+  height: fit-content;
+  margin-bottom: -0.5em;
+  margin-top: -0.5em;
+  margin-left: 0.5em;
+
+  padding: 0;
+
+  color: black;
+  background-color: #fff28e;
+  text-shadow: 2px 2px 5px #fff28e;
+
+  border-style: solid;
+  border-color: black;
+  border-radius: 50%;
+}
+.avatar {
+  width: auto;
+  height: 4em;
+}
+
+.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+h2{
+  margin-bottom:0em;
+}
+h3{
+  margin:0.5em;
+}
+table {
+  border-top: 1px solid;
+  border-bottom: 1px solid;
+}
+td.name{
+  text-align:left;
+}
+td.score{
+  text-align:right;
+}
+
+/* small text areas */
+.subtext {
+  margin-top: 0.25em;
+  margin-bottom: 0.25em;
+  font-size: 75%;
+}
+
+/* ============ BUTTONS AND FORM STYLING =========== */
+
+/* button styling (for all) */
+button {
+  min-width: 8.5em;
+
+  margin: 0.125em;
+  padding: 0.25em;
+
+  font-family: "Aclonica", Garamond;
+  color: black;
+  text-shadow: 2px 2px 5px whitesmoke;
+
+  background-color: #fff28e;
+
+  border-color: #413d28;
+  border-radius: 3px;
+}
+button:hover {
+  background-color: #fbf4bb;
+}
+button:active {
+  background-color: #f9e96f;
+  box-shadow: 0 2px #666;
+  transform: translateY(2px);
+}
+button.large {
+  font-size: 250%;
+}
+
+
+/* ============ ANIMATIONS =========== */
+
+/* mushroom wiggle animation */
+@keyframes wiggle {
+  0% {
+    transform: rotate(0.5deg);
+  }
+  50% {
+    transform: rotate(-0.5deg);
+  }
+  100% {
+    transform: rotate(0.5deg);
+  }
+}
+
+/* pause animation */
+@keyframes pause {
+  100% {
+    transform: rotate(0deg);
+  }
+}

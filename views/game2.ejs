@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" type="text/css" />
+    <link rel="icon" href="favicon.ico">
+    <title>RMH | Game</title>
+  </head>
+
+  <body>
+    <!-- PAGE HEADER: NONE -->
+    <div class="container">
+      <div class="contain">
+        <!-- LEFT SIDEBAR -->
+        <div id="sidebar">
+          <!-- GREETING WITH USERNAME -->
+          <% if(userName != null){ %>
+              <h1>Welcome <br/> <%= userName %>!</h1>
+              <% } %>
+              <!-- GAME BUTTONS -->
+              <button id = "newGame" onClick="start()">Start</button>
+              <br/>
+              <button id = "pause" onClick="pause()">Pause</button>
+
+            <!-- LEADERBOARD -->
+            <table class="center">
+              <caption><h2>Current Rankings</h2></caption>
+              <tr>
+                <th> <h3>user</h3> </th>
+                <th> <h3>score</h3> </th>
+              </tr>
+              <% if(results.length > 0){ %> <%results.forEach((result)=>{ %>
+
+                <tr>
+                  <td class="un"><%= result.name %></td>
+                  <td class="us"><%= result.score %></td>
+                </tr>
+
+              <% }) %> <% } %>
+            </table>
+
+            <!-- LOG OUT -->
+            <!--a href="/game2">Restart</a -->
+            <br/>
+            <a class="subtext" href="./login"> Log Out </a>
+
+        </div>
+      </div>
+      
+      <!-- GAME SHELL -->
+      <div id="game">
+        <canvas id="myCanvas"></canvas>
+        <br />
+        <!-- GAME SOUND -->
+        <embed
+        src="./audio/battle.mp3"
+        loop="true"
+        autostart="true"
+        width="2"
+        height="0"
+        />
+        
+
+      </div>
+    </div>
+    <!-- <script src="storeFiles.js"></script>
+    <script src="mushroomGame.js"></script> -->
+    <script>
+
+      //Game properties
+      //import localStorage from 'localStorage'
+
+      let canvas = document.getElementById("myCanvas");
+      let ctx = canvas.getContext("2d");
+      let str = document.getElementById("newGame")
+      //sets canvas size to window size TODO: set to browser window size
+      canvas.width  = window.innerWidth -200;
+      canvas.height = window.innerHeight;
+
+      // draws background with repeating titles to canvas size
+      function drawBackgroud(image){
+          let background = new Image();
+          background.src = image;
+          var pat = ctx.createPattern(background, "repeat");
+          ctx.fillStyle = pat;
+          ctx.rect(0,0,canvas.width,canvas.height); 
+          ctx.fill();
+      }
+
+      // arrow key listeners and initializations
+      document.addEventListener("keydown", keyDownHandler, false);
+      document.addEventListener("keyup", keyUpHandler, false);
+      let rightPressed = false;
+      let leftPressed = false;
+      let upPressed = false;
+      let downPressed = false;
+
+      // Game control variables
+      var currName = '<%-userName%>';
+      var flag = false; // new user in local storage
+      var isPause = false;
+      var isRunning = false;
+      var score = 0;
+
+      //Survivor
+      let survivorInfo = {
+        x:canvas.width/2, 
+        y:canvas.height/2, 
+        speed: 1, 
+        lives: 3, 
+        hitboxHeight: 37, 
+        hitboxWidth: 18, 
+        image: './img/calicoKitty.png'
+      };
+
+      //Bullet
+      let bulletArr = [];
+      let bulletInfo = {
+        speed: 2, 
+        radius:12, 
+        image: './img/mushroomWeapon.png'};
+
+      //Monster
+      let monsterArr = [];
+      let monsterImageSrcArr = [
+        './img/Emperor Slime.png', 
+        './img/Flaming Snowman.png', 
+        './img/Fury.png', 
+        './img/Octopot.png', 
+        './img/Sand Slime.png', 
+        './img/Sun Slime.png', 
+        './img/Wisp View3.png', 
+        './img/Yanfly.png', 
+        './img/Wave Slime.png'];
+      let monsterInfo = {
+        x:canvas.width/2, 
+        y:canvas.height/2, 
+        speed: 0.8, 
+        hitboxHeight: 30, 
+        hitboxWidth: 25,
+        image: null};
+
+      //key handlers (down)
+      function keyDownHandler(e){
+        if(e.key == "d" || e.key == "ArrowRight"){
+            rightPressed = true;
+        }
+        else if (e.key == "a" || e.key == "ArrowLeft"){
+            leftPressed = true;
+        }
+        else if (e.key == "w" || e.key == "ArrowUp"){
+            upPressed = true;
+        }
+        else if (e.key == "s" || e.key == "ArrowDown"){
+            downPressed = true;
+        }
+      }
+
+      //key handlers (up)
+      function keyUpHandler(e){
+        if(e.key == "d" || e.key == "ArrowRight"){
+            rightPressed = false;
+        }
+        else if (e.key == "a" || e.key == "ArrowLeft"){
+            leftPressed = false;
+        }
+        else if (e.key == "w" || e.key == "ArrowUp"){
+            upPressed = false;
+        }
+        else if (e.key == "s" || e.key == "ArrowDown"){
+            downPressed = false;
+        }
+      }
+
+      // initializes game; Bound to document button
+      function start() {
+        if(!isRunning){
+          initMes();
+        //run game
+          isRunning = true;
+          interval = setInterval(drawFram, 10);
+          setInterval(addBullet, 500);
+          setInterval(addMonster, 450);
+
+        }
+
+      }
+
+      // package message for server send
+      function initMes() {
+        var message_child = {};
+        let name = document.getElementById("name");
+        var historyMessage = JSON.parse(localStorage.getItem("messageStorage"));
+        if (historyMessage != null) {
+          for (let i = 0; i < historyMessage.length; i++) {
+            if (historyMessage[i].name === currName) {
+              flag = true;
+            }
+          }
+        }
+        // new user
+        if (!flag) {
+          message_child.name = currName;
+          message_child.score = 0;
+          if (historyMessage == null) {
+            historyMessage = new Array();
+          }
+          historyMessage.push(message_child);
+          localStorage.setItem("messageStorage", JSON.stringify(historyMessage));
+        }
+      }
+
+      // game over, update the local storage
+      function updateMes() {
+        var historyMessage = JSON.parse(localStorage.getItem("messageStorage"));
+        for (var i = 0; i < historyMessage.length; i++) {
+          if (historyMessage[i].name == currName) {
+            if (score > historyMessage[i].score) {
+              historyMessage[i].score = score;
+            }
+            localStorage.setItem("messageStorage", JSON.stringify(historyMessage));
+            return;
+          }
+        }
+      }
+
+      // pause game; bound to document button
+      function pause() {
+        if (isPause) {
+          interval = setInterval(drawFram, 10);
+          isPause = false;
+          let str = document.getElementById("pause");
+          str.innerText = "Pause";
+        } else {
+          clearInterval(interval);
+          interval = null;
+          isPause = true;
+          let str = document.getElementById("pause");
+          str.innerText = "Resume";
+        }
+
+      }
+
+      // checks if user has finished the game
+      function isFinished() {
+        if (survivor.lives <= 0) {
+          updateMes();
+        }
+      }
+
+      // initializes player character
+      function Survivor(){
+        this.x = survivorInfo.x;
+        this.y = survivorInfo.y;
+        this.speed = survivorInfo.speed;
+        this.lives = survivorInfo.lives;
+        this.hitboxHeight = survivorInfo.hitboxHeight;
+        this.hitboxWidth = survivorInfo.hitboxWidth;
+        this.image = survivorInfo.image;
+      }
+
+      // initializes bullet
+      function Bullet(){
+        this.speed = bulletInfo.speed;
+        this.radius = bulletInfo.radius;
+        this.image = bulletInfo.image;
+        this.x = survivor.x;
+        this.y = survivor.y;
+        this.dx = 1;
+        this.dy = 1;
+      }
+
+      // initializes monster
+      function Monster(){
+        this.x = monsterInfo.x;
+        this.y = monsterInfo.y;
+        this.speed = monsterInfo.speed;
+        this.lives = monsterInfo.lives;
+        this.hitboxHeight = monsterInfo.hitboxHeight;
+        this.hitboxWidth = monsterInfo.hitboxWidth;
+        this.image = monsterInfo.image;
+      }
+
+      // adds a new bullet to the bullet list
+      function addBullet(){
+        if(!isPause){
+          let currMonster = monsterArr[0];
+          let newBullet = new Bullet();
+
+          if(currMonster != null){
+            newBullet.dx = -newBullet.speed * (currMonster.x - survivor.x)/
+              Math.pow(Math.pow(currMonster.x - survivor.x, 2) + Math.pow(currMonster.y - survivor.y, 2),0.5);
+
+            newBullet.dy = -newBullet.speed * (currMonster.y - survivor.y)/
+              Math.pow(Math.pow(currMonster.x - survivor.x, 2) + Math.pow(currMonster.y - survivor.y, 2),0.5) ;
+          }
+
+          bulletArr.push(newBullet);
+        }
+      }
+
+      // adds a new monster to the monster list
+      function addMonster(){
+        if(!isPause){
+          const newMonster = new Monster();
+          
+          //generate random EDGE position for the new monster
+          let repMax = canvas.width*2 + canvas.height*2;
+          let randPos = Math.random()*repMax;
+          if(randPos < canvas.width){
+            newMonster.x = randPos;
+            newMonster.y = 0;
+          }
+          else if(randPos < canvas.width + canvas.height){
+            newMonster.x = canvas.width;
+            newMonster.y = randPos-canvas.width;
+          }
+          else if(randPos < canvas.width*2 + canvas.height){
+            newMonster.x = randPos - canvas.width - canvas.height;
+            newMonster.y = canvas.height;
+          }
+          else{
+            newMonster.x = 0;
+            newMonster.y = randPos - canvas.width*2 - canvas.height;
+          }
+
+          let type = monsterImageSrcArr.length;
+          let newImage = monsterImageSrcArr[Math.floor(Math.random()*type)];
+          newMonster.image = newImage;
+          monsterArr.push(newMonster);
+        }
+      }
+
+      // renders and moves player character
+      function drawSurvivor(){
+        let survivorImage = new Image();
+        survivorImage.src = survivor.image;
+        ctx.beginPath();
+        ctx.drawImage(survivorImage, survivor.x, survivor.y);
+        ctx.closePath();
+        
+
+        if(rightPressed){
+          survivor.x += survivor.speed;
+          if(survivor.x> canvas.width){
+            survivor.x = 0;
+          }
+        }
+
+        if(leftPressed){
+          survivor.x -= survivor.speed;
+            if(survivor.x < 0){
+              survivor.x = canvas.width;
+            }
+        }
+
+        if(upPressed){
+          survivor.y -= survivor.speed;
+          if(survivor.y <0){
+            survivor.y = canvas.height;
+          }
+        }
+
+        if(downPressed){
+          survivor.y += survivor.speed;
+          if(survivor.y>canvas.height){
+            survivor.y = 0;
+          }
+        }
+      }
+
+      // renders and moves bullets; removes off-screen bullets; 
+      // detects bullet-monster collisions
+      function drawBullets(){
+      //draw current bullets
+        ctx.beginPath();
+
+        //remove out of screen bullets
+        for(let i=0; i<bulletArr.length; i++){
+          const currBullet = bulletArr[i];
+          if(currBullet.x < 0 || currBullet.x > canvas.length 
+            || currBullet.y <0 || currBullet.y > canvas.height){
+              bulletArr.splice(i, 1);
+            }
+        }
+
+        //detect bullet and monster collision
+        for(let i=0; i<monsterArr.length; i++){
+          const currMonster = monsterArr[i];
+          for(let j=0; j<bulletArr.length; j++){
+            const currBullet = bulletArr[j];
+              if(currMonster.x + currMonster.hitboxWidth/2 >= currBullet.x - currBullet.radius &&
+              currMonster.x - currMonster.hitboxWidth/2 <= currBullet.x + currBullet.radius &&
+              currMonster.y + currMonster.hitboxHeight/2 >= currBullet.y - currBullet.radius &&
+              currMonster.y - currMonster.hitboxHeight/2 <= currBullet.y + currBullet.radius){
+                score++;
+                //document.getElementById("score").innerHTML = score;
+                monsterArr.splice(i, 1);
+                bulletArr.splice(j,1);
+              }
+          }
+        }
+
+        //draw the rest, valid bullets
+        //then update the bullets locations
+        for(let j=0; j<bulletArr.length; j++){
+          const currBullet = bulletArr[j];
+          let bulletImage = new Image();
+          bulletImage.src = currBullet.image;
+          ctx.drawImage(bulletImage, currBullet.x, currBullet.y);
+
+          //update location
+          currBullet.x -= currBullet.dx;
+          currBullet.y -= currBullet.dy;
+        }
+        ctx.closePath();
+      }
+
+      // renders and moves monsters; removes off-screen monsters; 
+      // detects monster-player collisions
+      function drawMonsters(){
+        ctx.beginPath();
+
+        // remove out of screen monsters
+        for(let i=0; i<monsterArr.length; i++){
+          const currMonster = monsterArr[i];
+          if(currMonster.x + 2*currMonster.hitboxWidth< 0 || currMonster.x - 2*currMonster.hitboxWidth> canvas.length 
+            || currMonster.y + 2*currMonster.hitboxHeight<0 || currMonster.y - 2*currMonster.hitboxHeight> canvas.height){
+              monsterArr.splice(i, 1);
+            }      
+          
+        }
+
+        //detect collision between survivor and monster
+        for(let i=0; i<monsterArr.length; i++){
+          const currMonster = monsterArr[i];
+          
+            if(currMonster.x + currMonster.hitboxWidth/2 >= survivor.x - survivor.hitboxWidth/2 &&
+            currMonster.x - currMonster.hitboxWidth/2 <= survivor.x + survivor.hitboxWidth/2 &&
+            currMonster.y + currMonster.hitboxHeight/2 >= survivor.y- survivor.hitboxHeight/2 &&
+            currMonster.y - currMonster.hitboxHeight/2 <= survivor.y + survivor.hitboxHeight/2){
+              //decrease live and remove all monsters
+              survivor.lives--;
+              monsterArr.splice(0, monsterArr.length);
+              if(survivor.lives<=0){
+                api()
+                alert("Game Over, and your score is: " + score);
+                document.location.reload();
+                clearInterval(interval);
+              }
+            }
+        }
+
+        //draw the monsters and update their position
+        for(let j=0; j<monsterArr.length; j++){
+          const currMonster = monsterArr[j];
+          let currMonsterImage = new Image();
+          currMonsterImage.src = currMonster.image;
+          ctx.drawImage(currMonsterImage, currMonster.x, currMonster.y);
+
+          //update location
+          currMonster.x -= currMonster.speed*(currMonster.x-survivor.x)/Math.pow(Math.pow(currMonster.x-survivor.x,2) + Math.pow(currMonster.y - survivor.y, 2), 0.5)
+          
+          currMonster.y -= currMonster.speed*(currMonster.y-survivor.y)/Math.pow(Math.pow(currMonster.x-survivor.x,2) + Math.pow(currMonster.y - survivor.y, 2), 0.5)
+        }
+        ctx.closePath();
+      }
+
+      // sends score to server 
+      function api(){
+        let xhr = new XMLHttpRequest();
+        // xhr.open("get", "http://localhost:3000/api?score="+score)
+        // xhr.send();
+      // xhr.open("get", "http://localhost:3000/api?name="+currName)
+      var qry = "http://localhost:3000/api?score="+score+"&&name="+currName;
+        xhr.open("get", qry);
+        xhr.send();
+      }
+
+      // character lives printout
+      function drawLives(){
+        ctx.beginPath();
+        ctx.font = "20px Courier";
+        ctx.strokeText("Lives: " + survivor.lives, 20, 20);
+        ctx.lineWidth=3;
+        ctx.shadowColor = "black";
+        ctx.fillStyle = "#00fffc";
+        ctx.fillText("Lives: " + survivor.lives, 20, 20);
+        ctx.closePath();
+      }
+
+      // character score printout
+      function drawScore(){
+        ctx.beginPath();
+        ctx.font = "20px Courier";
+        ctx.strokeText("Score: " + score, 20, 40);
+        ctx.lineWidth=3;
+        ctx.shadowColor = "black";
+        ctx.fillStyle = "#00fffc"; 
+        ctx.fillText("Score: " + score, 20, 40);
+        ctx.closePath();
+      }
+
+      // runs the game
+      function drawFram(){
+        drawBackgroud('./img/twigs.jpg');
+        drawSurvivor();
+        drawBullets();
+        drawMonsters();
+        drawLives();
+        drawScore();
+        isFinished();
+      }
+
+      //Initialization
+      let survivor = new Survivor();
+
+      //run game
+      // let interval = setInterval(drawFram, 10);
+      // setInterval(addBullet, 500);
+      // setInterval(addMonster, 450);
+
+      // game start, initial user's info
+      // let interval = null;
+
+    </script>
+
+  </body>
+</html>

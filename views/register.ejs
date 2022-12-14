@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="icon" href="favicon.ico">
+    <title>RMH | Register</title>
+  </head>
+  <body>
+    <!-- PAGE HEADER -->
+    <h1 id="banner">Rogue Mushroom Hunter</h1>
+    <!-- BOX FOR CONTENT -->
+    <div id="box">
+      <h2>Register</h2>
+
+      <!-- DECORATIVE IMAGE -->
+      <img id="deco" src="./mushroom.png" alt="mushroom logo" />
+
+      <!-- FORM DATA -->
+      <form action="/register" method="post">
+          <!-- MESSAGE  -->
+          <div>
+            <label id="message">
+              <% if(message) {%>
+              <h3><%= message %></h3>
+              <% } %>
+            </label>
+          </div>
+
+          <!-- USERNAME  -->
+          <div>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Username"
+              required
+            />
+          </div>
+          <!-- <div>
+                <label for="email">email: </label>
+                <input type="text" id="email" name="email">
+            </div> -->
+
+          <!-- PASSWORD -->
+          <div>
+            
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Password"
+              required
+            />
+          </div>
+          
+          <!-- SHOW/HIDE PASSWORD  -->
+          <label class="subtext">
+            <input type="checkbox" name="remember" onChange="pwToggle()" />
+            Show password
+          </label>
+          <br />
+          <br />
+          <!-- SUBMIT  -->
+          <button type="submit">Register</button>
+      </form>
+
+      <!-- TO REGISTRATION  -->
+      <div class="subtext">
+        <br />
+        Have an account?
+        <a href="/login">Log In</a>
+        <br />      <!-- TO HOME  -->
+        <a href="/home">Go Back</a> 
+      </div>
+
+    </div>
+
+    <!-- PASSWORD TOGGLE SCRIPT  -->
+    <script>
+      function pwToggle() {
+        let pwShow = document.getElementById("password");
+        if (pwShow.type === "password") {
+          pwShow.type = "text";
+        } else {
+          pwShow.type = "password";
+        }
+      }
+    </script>
+  </body>
+</html>

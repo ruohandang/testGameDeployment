@@ -1,8 +1,7 @@
 {
   "name": "test",
-  "version": "1.0.0",
+  "version": "16.17.1",
   "description": "",
-  "main": "index.js",
   "scripts": {
     "devStart": "nodemon server.js"
   },

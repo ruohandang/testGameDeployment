@@ -51,7 +51,7 @@ app.get("/", (req, res) => {
 
 app.get("/game2", async (req, res) => {
   try {
-    const results = await User.find().sort("-score").limit(5);
+    const results = await User.find().sort("-score").limit(10);
     //res.json(await User.find().sort("-score"));
     return res.render("game2", { results: results, userName: null });
   } catch {

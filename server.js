@@ -96,7 +96,7 @@ app.post("/login", async (req, res) => {
       return res.render("login", { message: req.flash("userNotFound") });
     }
     if (await bcrypt.compare(req.body.password, user.password)) {
-      const results = await User.find().sort("-score").limit(5);
+      const results = await User.find().sort("-score").limit(10);
       return res.render("game2", { results: results, userName: req.body.name });
     } else {
       res.render("login", { message: req.flash("wrongPassword") });
